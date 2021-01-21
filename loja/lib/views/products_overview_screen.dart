@@ -1,12 +1,17 @@
+import 'dart:js';
+
 import 'package:flutter/material.dart';
-import 'package:loja/data/dummy_data.dart';
+
 import 'package:loja/models/product.dart';
-import 'package:loja/widgets/productItem.dart';
+import 'package:loja/providers/product.dart';
+import 'package:loja/widgets/product_Item.dart';
+import 'package:provider/provider.dart';
 
 class ProductOverviewScreen extends StatelessWidget {
-  final List<Product> loadedProducts = DUMMY_PRODUCTS;
   @override
   Widget build(BuildContext context) {
+    final List<Product> loadedProducts = Provider.of<Products>(context).items;
+    // estou acessando os produtos a partir de provider products
     return Scaffold(
       appBar: AppBar(
         title: Text('Minha loja'),
