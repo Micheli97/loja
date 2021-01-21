@@ -15,6 +15,10 @@ class Products with ChangeNotifier {
   // Mesmo que a lista seja modificada não irá alterar a lista original
   // Se alguem quiser alterar o valor será pela classe Products e nao a partir
   // do valor que e retornando por get items
+  List<Product> get favoriteItems {
+    return _items.where((prod) => prod.isFavorite).toList();
+    // aqui esta retornando apenas os itens favoritos da lista
+  }
 
   void addProduct(Product product) {
     _items.add(product);
