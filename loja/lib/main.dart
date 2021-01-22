@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loja/providers/cart.dart';
 import 'package:loja/providers/products.dart';
 import 'package:loja/utils/app_routes.dart';
 import 'package:loja/views/product_detail_screen.dart';
@@ -12,12 +13,18 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      // esta envolvendo a aplicacao em um ponto que etara disponivel para
-      // toda a aplicacao
-      // o  ChangeNotifierProvider é especializado no tipo de classe ChangeNotifier
+    return MultiProvider(
+      // add multiplos providers
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) =>
+              new Products(), // aqui ele cria o produto o changeNotifier
+        ),
+        ChangeNotifierProvider(
+          create: (_) => new Cart(),
+        ),
+      ],
 
-      create: (_) => Products(), // aqui ele cria o produto o changeNotifier
       child: MaterialApp(
         theme: ThemeData(
           primarySwatch: Colors.purple,

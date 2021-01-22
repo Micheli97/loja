@@ -19,14 +19,22 @@ class CartItem {
 // classe que representa o carrinho
 
 class Cart with ChangeNotifier {
-  Map<String, CartItem> _items;
+  Map<String, CartItem> _items =
+      {}; // dessa forma ele está nulo, a add {} ele se torna vazio
   // A string aqui será o id do produto (chave), e o valor será o item do
-  // carrinho
+  // carrinhoss
 
-  Map<String, CartItem> get item {
+  Map<String, CartItem> get items {
     return {..._items};
     // Aqui eu estou clonando os itens para que as modificações feitas
     // não afetem o original
+  }
+
+  int get itemCount {
+    // aqui eu estou pegando o tamanho da lista, se eu pegasse a partir da logica
+    // acima nao daria certo pq eu precisaria clonar a lista toda vez que quisesse
+    // fazer isso
+    return _items.length;
   }
 
   void addItem(Product product) {
@@ -57,5 +65,6 @@ class Cart with ChangeNotifier {
             price: product.price),
       );
     }
+    notifyListeners();
   }
 }
