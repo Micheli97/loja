@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:loja/providers/product.dart';
+import 'package:loja/providers/products.dart';
 import 'package:loja/utils/app_routes.dart';
 import 'package:loja/views/product_detail_screen.dart';
 import 'package:loja/views/products_overview_screen.dart';
@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.purple,
           accentColor: Colors.deepOrange,
-          fontFamily: 'Lato',
+          // fontFamily: 'Lato',
         ),
         home: ProductOverviewScreen(),
         routes: {AppRoutes.PRODUCT_DETAIL: (ctx) => ProductDetailScreen()},

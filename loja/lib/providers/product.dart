@@ -1,28 +1,29 @@
-// O objetivo da classe e encapsular a lista de produtos
+import 'package:flutter/foundation.dart';
 
-import 'package:flutter/cupertino.dart';
-import 'package:loja/data/dummy_data.dart';
-import 'package:loja/models/product.dart';
+class Product with ChangeNotifier {
+  final String id;
+  final String title;
+  final String description;
+  final double price;
+  final String imageUrl;
+  bool isFavorite;
 
-class Products with ChangeNotifier {
-  // quando uma mudança aconte ele notifica aos "interessasdos"
-  // quando um determinado valor for modificado
+  // esses valores finais precisam ser passados na hora da
+  // construção do produto
+  // e temos apenas um variavel dentro da classe que tem um
+  // valor padrão false
 
-  List<Product> _items = DUMMY_PRODUCTS;
+  Product({
+    @required this.id,
+    @required this.title,
+    @required this.description,
+    @required this.price,
+    @required this.imageUrl,
+    this.isFavorite = false,
+  });
 
-  List<Product> get items => [..._items];
-  // Aqui eu estou retornando uma cópida da lista
-  // Mesmo que a lista seja modificada não irá alterar a lista original
-  // Se alguem quiser alterar o valor será pela classe Products e nao a partir
-  // do valor que e retornando por get items
-  List<Product> get favoriteItems {
-    return _items.where((prod) => prod.isFavorite).toList();
-    // aqui esta retornando apenas os itens favoritos da lista
-  }
-
-  void addProduct(Product product) {
-    _items.add(product);
-    notifyListeners(); //é ele que vai notificar todos os envolvidos
-    // que a lista foi modificada
+  void toggleFavorite() {
+    isFavorite = !isFavorite;
+    notifyListeners();
   }
 }
