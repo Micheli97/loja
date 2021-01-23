@@ -87,4 +87,10 @@ class Cart with ChangeNotifier {
     // essa função está removendo o item da lista
     // e informando aos outros componentem sobre as mudanças ocorridas
   }
+
+  void clear() {
+    _items = {};
+    notifyListeners();
+    // função para limpar a lista
+  }
 }
