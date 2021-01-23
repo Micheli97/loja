@@ -30,11 +30,19 @@ class Cart with ChangeNotifier {
     // não afetem o original
   }
 
-  int get itemCount {
+  int get itemsCount {
     // aqui eu estou pegando o tamanho da lista, se eu pegasse a partir da logica
     // acima nao daria certo pq eu precisaria clonar a lista toda vez que quisesse
     // fazer isso
     return _items.length;
+  }
+
+  double get totalAmount {
+    double total = 0.0;
+    _items.forEach((key, cartItem) {
+      total += cartItem.price * cartItem.quantity;
+    });
+    return total;
   }
 
   void addItem(Product product) {
