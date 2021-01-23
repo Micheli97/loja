@@ -6,12 +6,14 @@ import 'package:loja/providers/product.dart';
 class CartItem {
   // Classe dos itens do carrinho
   final String id;
+  final String productId;
   final String title;
   final int quantity;
   final double price;
 
   CartItem(
       {@required this.id,
+      @required this.productId,
       @required this.title,
       @required this.quantity,
       @required this.price});
@@ -54,6 +56,7 @@ class Cart with ChangeNotifier {
         product.id,
         (existingItem) => CartItem(
           id: existingItem.id,
+          productId: product.id,
           title: existingItem.title,
           quantity: existingItem.quantity + 1,
           price: existingItem.price,
@@ -68,11 +71,20 @@ class Cart with ChangeNotifier {
         () => CartItem(
             id: Random().nextDouble().toString(),
             // esse id e diferente do id do produto
+            productId: product.id,
             title: product.title,
             quantity: 1,
             price: product.price),
       );
     }
     notifyListeners();
+  }
+
+  void revomeItem(String productId) {
+    _items.remove(productId);
+    notifyListeners();
+
+    // essa função está removendo o item da lista
+    // e informando aos outros componentem sobre as mudanças ocorridas
   }
 }
