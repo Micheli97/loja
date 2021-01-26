@@ -20,7 +20,7 @@ class ProductGrid extends StatelessWidget {
       itemCount: product.length,
       itemBuilder: (ctx, i) => ChangeNotifierProvider.value(
         value: product[i],
-        child: ProductItem(),
+        child: ProductGridItem(),
       ),
       // Aqui eu estou passando como parametro uma lista de elementos
       // que está sendo acessado pelo indice i
