@@ -20,6 +20,10 @@ class Products with ChangeNotifier {
     // aqui esta retornando apenas os itens favoritos da lista
   }
 
+  int get itemsCount {
+    return _items.length;
+  }
+
   void addProduct(Product product) {
     _items.add(product);
     notifyListeners(); //é ele que vai notificar todos os envolvidos
