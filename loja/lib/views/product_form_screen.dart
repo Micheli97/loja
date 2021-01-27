@@ -21,8 +21,21 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
     final _formDdata = Map<String, Object>();
     // criando um objeto a partir do map
 
+    bool isValidImageUrl(String url) {
+      bool startWidthHttp = url.toLowerCase().startsWith('http://');
+      bool startWtihHttps = url.toLowerCase().startsWith('https://');
+      bool endsWithPng = url.toLowerCase().startsWith('.png');
+      bool endsWithJpg = url.toLowerCase().startsWith('.jpg');
+      bool endsWithJpeg = url.toLowerCase().startsWith('.jpeg');
+
+      return (startWtihHttps || startWtihHttps) &&
+          (endsWithPng || endsWithJpg || endsWithJpeg);
+    }
+
     void _updateImage() {
-      setState(() {});
+      if (isValidImageUrl(_imageUrlController.text)) {
+        setState(() {});
+      }
     }
 
     @override
@@ -87,12 +100,12 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                 },
                 onSaved: (value) => _formDdata['title'] = value,
                 validator: (value) {
-                  if (value.trim().isEmpty) {
-                    return 'Informe um título válido';
+                  bool isEmpty = value.trim().isEmpty;
+                  bool isInvalid = value.trim().length < 3;
+                  if (isEmpty || isInvalid) {
+                    return 'Informe um Título válido!';
                   }
-                  if (value.trim().length < 3) {
-                    return 'Informe um título com no mínimo 3 letras!';
-                  }
+
                   return null;
                 },
               ),
@@ -113,6 +126,15 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                 keyboardType: TextInputType.multiline,
                 focusNode: _descriptionFocusNode,
                 onSaved: (value) => _formDdata['description'] = value,
+                validator: (value) {
+                  bool emptyUrl = value.trim().isEmpty;
+                  var newPrice = double.tryParse(value);
+                  bool invalidUrl = newPrice == null || newPrice <= 0;
+
+                  if (emptyUrl || invalidUrl) {
+                    return 'Informe um Preço válido!';
+                  }
+                },
               ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -134,6 +156,14 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                         _saveForm();
                       },
                       onSaved: (value) => _formDdata['imageUrl'] = value,
+                      validator: (value) {
+                        bool emptyUrl = value.trim().isEmpty;
+                        bool invalidUrl = isValidImageUrl(value);
+
+                        if (emptyUrl || invalidUrl) {
+                          return 'Informe uma url válida!';
+                        }
+                      },
                     ),
                   ),
                   Container(
