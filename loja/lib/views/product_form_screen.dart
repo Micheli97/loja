@@ -3,6 +3,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:loja/providers/product.dart';
+import 'package:loja/providers/products.dart';
+import 'package:provider/provider.dart';
 
 class ProductFormScreen extends StatefulWidget {
   @override
@@ -71,6 +73,11 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
         imageUrl: _formDdata['imageUrl'],
         // acessando os valorers do formulario
       );
+
+      Provider.of<Products>(context, listen: false).addProduct(newProduct);
+      // É possivel utilizar o metodo provider fora do builder desde que use o
+      // listners como false
+      Navigator.of(context).pop();
     }
 
     return Scaffold(

@@ -1,5 +1,7 @@
 // O objetivo da classe e encapsular a lista de produtos
 
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:loja/data/dummy_data.dart';
 import '../providers/product.dart';
@@ -24,8 +26,17 @@ class Products with ChangeNotifier {
     return _items.length;
   }
 
-  void addProduct(Product product) {
-    _items.add(product);
+  void addProduct(Product newproduct) {
+    _items.add(
+      Product(
+        id: Random().nextDouble().toString(),
+        title: newproduct.title,
+        price: newproduct.price,
+        description: newproduct.description,
+        imageUrl: newproduct.imageUrl,
+      ),
+    );
+    // _items.add(product);
     notifyListeners(); //é ele que vai notificar todos os envolvidos
     // que a lista foi modificada
   }
