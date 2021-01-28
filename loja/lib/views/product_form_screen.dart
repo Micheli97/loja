@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -20,7 +19,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
     final _imageUrlController = TextEditingController();
     final _form = GlobalKey<FormState>();
     // essa global key e para acessar o formulário
-    final _formDdata = Map<String, Object>();
+    final _formData = Map<String, Object>();
     // criando um objeto a partir do map
 
     bool isValidImageUrl(String url) {
@@ -30,7 +29,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
       bool endsWithJpg = url.toLowerCase().startsWith('.jpg');
       bool endsWithJpeg = url.toLowerCase().startsWith('.jpeg');
 
-      return (startWtihHttps || startWtihHttps) &&
+      return (startWidthHttp || startWtihHttps) &&
           (endsWithPng || endsWithJpg || endsWithJpeg);
     }
 
@@ -45,6 +44,24 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
       // inicializando o estado
       super.initState();
       _imageUrlFocusNode.addListener(_updateImage);
+    }
+
+    @override
+    void didChageDependencies() {
+      super.didChangeDependencies();
+
+      if (_formData.isEmpty) {
+        // aqui ele vai iniciar o formData apenas quando ele estiver vazio
+
+        final product = ModalRoute.of(context).settings.arguments as Product;
+        _formData['id'] = product.id;
+        _formData['title'] = product.title;
+        _formData['description'] = product.description;
+        _formData['price'] = product.price;
+        _formData['imageUrl'] = product.imageUrl;
+
+        _imageUrlController.text = _formData['imageUrl'];
+      }
     }
 
     @override
@@ -67,10 +84,10 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
       _form.currentState.save();
       final newProduct = Product(
         id: Random().nextDouble().toString(),
-        title: _formDdata['title'],
-        price: _formDdata['price'],
-        description: _formDdata['description'],
-        imageUrl: _formDdata['imageUrl'],
+        title: _formData['title'],
+        price: _formData['price'],
+        description: _formData['description'],
+        imageUrl: _formData['imageUrl'],
         // acessando os valorers do formulario
       );
 
@@ -99,13 +116,14 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
           child: ListView(
             children: [
               TextFormField(
+                initialValue: _formData['title'],
                 decoration: InputDecoration(labelText: 'Título'),
                 textInputAction: TextInputAction.next, // para pular para o
                 // textform
                 onFieldSubmitted: (_) {
                   FocusScope.of(context).requestFocus(_priceFocusNode);
                 },
-                onSaved: (value) => _formDdata['title'] = value,
+                onSaved: (value) => _formData['title'] = value,
                 validator: (value) {
                   bool isEmpty = value.trim().isEmpty;
                   bool isInvalid = value.trim().length < 3;
@@ -117,6 +135,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                 },
               ),
               TextFormField(
+                  initialValue: _formData['price'].toString(),
                   decoration: InputDecoration(labelText: 'Preço'),
                   textInputAction: TextInputAction.next, // para pular para o
                   // textform
@@ -125,14 +144,14 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                   onFieldSubmitted: (_) {
                     FocusScope.of(context).requestFocus(_descriptionFocusNode);
                   },
-                  onSaved: (value) =>
-                      _formDdata['prive'] = double.parse(value)),
+                  onSaved: (value) => _formData['prive'] = double.parse(value)),
               TextFormField(
+                initialValue: _formData['description'],
                 decoration: InputDecoration(labelText: 'Descrição'),
                 maxLines: 3,
                 keyboardType: TextInputType.multiline,
                 focusNode: _descriptionFocusNode,
-                onSaved: (value) => _formDdata['description'] = value,
+                onSaved: (value) => _formData['description'] = value,
                 validator: (value) {
                   bool emptyUrl = value.trim().isEmpty;
                   var newPrice = double.tryParse(value);
@@ -150,6 +169,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                   Expanded(
                     // ao usar o expandede ele corrige esse problema
                     child: TextFormField(
+                      initialValue: _formData['imageUrl'],
                       // O controller so esta sendo usasdo porque precisa do prevew
                       // da imagem antes de submeter o formulário
                       decoration: InputDecoration(
@@ -162,7 +182,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                       onFieldSubmitted: (_) {
                         _saveForm();
                       },
-                      onSaved: (value) => _formDdata['imageUrl'] = value,
+                      onSaved: (value) => _formData['imageUrl'] = value,
                       validator: (value) {
                         bool emptyUrl = value.trim().isEmpty;
                         bool invalidUrl = isValidImageUrl(value);

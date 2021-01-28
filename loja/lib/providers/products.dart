@@ -40,4 +40,16 @@ class Products with ChangeNotifier {
     notifyListeners(); //é ele que vai notificar todos os envolvidos
     // que a lista foi modificada
   }
+
+  void updateProduct(Product product) {
+    if (product == null || product.id == null) {
+      return;
+    }
+
+    final index = _items.indexWhere((prod) => prod.id == product.id);
+    if (index >= 0) {
+      _items[index] = product;
+      notifyListeners();
+    }
+  }
 }
