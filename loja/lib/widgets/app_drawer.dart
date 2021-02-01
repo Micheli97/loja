@@ -24,7 +24,7 @@ class AppDrawer extends StatelessWidget {
           ),
           Divider(),
           ListTile(
-            leading: Icon(Icons.shop),
+            leading: Icon(Icons.payment),
             title: Text('Pedidos'),
             onTap: () {
               Navigator.of(context).popAndPushNamed(
@@ -38,7 +38,7 @@ class AppDrawer extends StatelessWidget {
             title: Text('Gerenciar Produtos'),
             onTap: () {
               Navigator.of(context).popAndPushNamed(
-                AppRoutes.ORDERS,
+                AppRoutes.PRODUCTS,
               );
             },
           ),
