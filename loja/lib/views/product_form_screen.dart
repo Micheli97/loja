@@ -93,9 +93,9 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
     );
 
     final products = Provider.of<Products>(context, listen: false);
-    if(_formData['id'] === null){
+    if (_formData['id'] == null) {
       products.addProduct(product);
-    } else{
+    } else {
       products.updateProduct(product);
     }
     Navigator.of(context).pop();
@@ -124,7 +124,8 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
               TextFormField(
                 initialValue: _formData['title'],
                 decoration: InputDecoration(labelText: 'Título'),
-                textInputAction: TextInputAction.next, // para pular para o textform
+                textInputAction:
+                    TextInputAction.next, // para pular para o textform
                 onFieldSubmitted: (_) {
                   FocusScope.of(context).requestFocus(_priceFocusNode);
                 },
@@ -141,26 +142,27 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                 },
               ),
               TextFormField(
-                  initialValue: _formData['price'].toString(),
-                  decoration: InputDecoration(labelText: 'Preço'),
-                  textInputAction: TextInputAction.next, // para pular para o textform
-                  focusNode: _priceFocusNode,
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
-                  onFieldSubmitted: (_) {
-                    FocusScope.of(context).requestFocus(_descriptionFocusNode);
-                  },
-                  onSaved: (value) => _formData['prive'] = double.parse(value),
-                  validator: (value){
-                    bool isEmpty = value.trim().isEmpty;
-                    var newPrice = double.tryParse(value);
-                    bool isInvalid = newPrice == null || newPrice <= 0;
+                initialValue: _formData['price'].toString(),
+                decoration: InputDecoration(labelText: 'Preço'),
+                textInputAction:
+                    TextInputAction.next, // para pular para o textform
+                focusNode: _priceFocusNode,
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                onFieldSubmitted: (_) {
+                  FocusScope.of(context).requestFocus(_descriptionFocusNode);
+                },
+                onSaved: (value) => _formData['prive'] = double.parse(value),
+                validator: (value) {
+                  bool isEmpty = value.trim().isEmpty;
+                  var newPrice = double.tryParse(value);
+                  bool isInvalid = newPrice == null || newPrice <= 0;
 
-                    if (isEmpty || isInvalid){
-                      return 'Informe um Preço válido!';
-                    }
-                    return null;
-                  },
-                  ),
+                  if (isEmpty || isInvalid) {
+                    return 'Informe um Preço válido!';
+                  }
+                  return null;
+                },
+              ),
               TextFormField(
                 initialValue: _formData['description'],
                 decoration: InputDecoration(labelText: 'Descrição'),
