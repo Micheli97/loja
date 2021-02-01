@@ -10,6 +10,7 @@ class Badge extends StatelessWidget {
     @required this.value,
     this.color,
   });
+
   @override
   Widget build(BuildContext context) {
     return Stack(
