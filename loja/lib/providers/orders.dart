@@ -1,18 +1,16 @@
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:loja/providers/cart.dart';
 
 class Order {
   final String id;
-  final double amount;
   final double total;
   final List<CartItem> products;
   final DateTime date;
 
   Order({
     this.id,
-    this.amount,
     this.total,
     this.products,
     this.date,
