@@ -5,21 +5,23 @@ import 'package:provider/provider.dart';
 
 class ProductGrid extends StatelessWidget {
   final bool showFavoriteOnly;
+
   ProductGrid(this.showFavoriteOnly);
 
   @override
   Widget build(BuildContext context) {
     final productsProvider = Provider.of<Products>(context);
-    final product = showFavoriteOnly
+    final products = showFavoriteOnly
         ? productsProvider.favoriteItems
         : productsProvider.items;
     // estou acessando os produtos a partir de provider products
     // O gridview.build mostra os dados de acordo com o que e
     // solicitado na tela
     return GridView.builder(
-      itemCount: product.length,
+      padding: EdgeInsets.all(10),
+      itemCount: products.length,
       itemBuilder: (ctx, i) => ChangeNotifierProvider.value(
-        value: product[i],
+        value: products[i],
         child: ProductGridItem(),
       ),
       // Aqui eu estou passando como parametro uma lista de elementos
