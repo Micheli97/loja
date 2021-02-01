@@ -14,7 +14,7 @@ class Product with ChangeNotifier {
   // valor padrão false
 
   Product({
-    @required this.id,
+    this.id,
     @required this.title,
     @required this.description,
     @required this.price,
