@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:loja/providers/product.dart';
 import 'package:loja/providers/products.dart';
@@ -11,49 +9,31 @@ class ProductFormScreen extends StatefulWidget {
 }
 
 class _ProductFormScreenState extends State<ProductFormScreen> {
+  final _priceFocusNode = FocusNode();
+  final _descriptionFocusNode = FocusNode();
+  final _imageUrlFocusNode = FocusNode();
+  final _imageUrlController = TextEditingController();
+  final _form = GlobalKey<FormState>();
+  // essa global key e para acessar o formulário
+  final _formData = Map<String, Object>();
+  // criando um objeto a partir do map
+
   @override
-  Widget build(BuildContext context) {
-    final _priceFocusNode = FocusNode();
-    final _descriptionFocusNode = FocusNode();
-    final _imageUrlFocusNode = FocusNode();
-    final _imageUrlController = TextEditingController();
-    final _form = GlobalKey<FormState>();
-    // essa global key e para acessar o formulário
-    final _formData = Map<String, Object>();
-    // criando um objeto a partir do map
+  void initState() {
+    // inicializando o estado
+    super.initState();
+    _imageUrlFocusNode.addListener(_updateImage);
+  }
 
-    bool isValidImageUrl(String url) {
-      bool startWidthHttp = url.toLowerCase().startsWith('http://');
-      bool startWtihHttps = url.toLowerCase().startsWith('https://');
-      bool endsWithPng = url.toLowerCase().startsWith('.png');
-      bool endsWithJpg = url.toLowerCase().startsWith('.jpg');
-      bool endsWithJpeg = url.toLowerCase().startsWith('.jpeg');
+  @override
+  void didChageDependencies() {
+    super.didChangeDependencies();
 
-      return (startWidthHttp || startWtihHttps) &&
-          (endsWithPng || endsWithJpg || endsWithJpeg);
-    }
-
-    void _updateImage() {
-      if (isValidImageUrl(_imageUrlController.text)) {
-        setState(() {});
-      }
-    }
-
-    @override
-    void initState() {
-      // inicializando o estado
-      super.initState();
-      _imageUrlFocusNode.addListener(_updateImage);
-    }
-
-    @override
-    void didChageDependencies() {
-      super.didChangeDependencies();
-
-      if (_formData.isEmpty) {
-        // aqui ele vai iniciar o formData apenas quando ele estiver vazio
-
-        final product = ModalRoute.of(context).settings.arguments as Product;
+    if (_formData.isEmpty) {
+      // aqui ele vai iniciar o formData apenas quando ele estiver vazio
+      final product = ModalRoute.of(context).settings.arguments as Product;
+      if (product != null) {
+        // aqui eu estou verificando se o produto foi passado como argumento
         _formData['id'] = product.id;
         _formData['title'] = product.title;
         _formData['description'] = product.description;
@@ -61,42 +41,68 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
         _formData['imageUrl'] = product.imageUrl;
 
         _imageUrlController.text = _formData['imageUrl'];
+      } else {
+        _formData['price'] = '';
       }
     }
+  }
 
-    @override
-    void disposed() {
-      super.dispose();
-      _priceFocusNode.dispose();
-      _descriptionFocusNode.dispose();
-      _imageUrlFocusNode.removeListener(_updateImage);
-      _imageUrlFocusNode.dispose();
+  void _updateImage() {
+    if (isValidImageUrl(_imageUrlController.text)) {
+      setState(() {});
+    }
+  }
+
+  bool isValidImageUrl(String url) {
+    bool startWidthHttp = url.toLowerCase().startsWith('http://');
+    bool startWtihHttps = url.toLowerCase().startsWith('https://');
+    bool endsWithPng = url.toLowerCase().startsWith('.png');
+    bool endsWithJpg = url.toLowerCase().startsWith('.jpg');
+    bool endsWithJpeg = url.toLowerCase().startsWith('.jpeg');
+
+    return (startWidthHttp || startWtihHttps) &&
+        (endsWithPng || endsWithJpg || endsWithJpeg);
+  }
+
+  @override
+  void disposed() {
+    super.dispose();
+    _priceFocusNode.dispose();
+    _descriptionFocusNode.dispose();
+    _imageUrlFocusNode.removeListener(_updateImage);
+    _imageUrlFocusNode.dispose();
+  }
+
+  void _saveForm() {
+    var isValid = _form.currentState.validate();
+    // chamando a validação
+    if (!isValid) {
+      // se o formulário nao for valido ele sai e nao executa as linhas abaixo
+      return;
     }
 
-    void _saveForm() {
-      var isValid = _form.currentState.validate();
-      // chamando a validação
-      if (!isValid) {
-        // se o formulário nao for valido ele sai e nao executa as linhas abaixo
-        return;
-      }
+    _form.currentState.save();
 
-      _form.currentState.save();
-      final newProduct = Product(
-        id: Random().nextDouble().toString(),
-        title: _formData['title'],
-        price: _formData['price'],
-        description: _formData['description'],
-        imageUrl: _formData['imageUrl'],
-        // acessando os valorers do formulario
-      );
+    final product = Product(
+      id: _formData['id'],
+      title: _formData['title'],
+      price: _formData['price'],
+      description: _formData['description'],
+      imageUrl: _formData['imageUrl'],
+      // acessando os valorers do formulario
+    );
 
-      Provider.of<Products>(context, listen: false).addProduct(newProduct);
-      // É possivel utilizar o metodo provider fora do builder desde que use o
-      // listners como false
-      Navigator.of(context).pop();
+    final products = Provider.of<Products>(context, listen: false);
+    if(_formData['id'] === null){
+      products.addProduct(product);
+    } else{
+      products.updateProduct(product);
     }
+    Navigator.of(context).pop();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Formulário Produto'),
@@ -118,8 +124,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
               TextFormField(
                 initialValue: _formData['title'],
                 decoration: InputDecoration(labelText: 'Título'),
-                textInputAction: TextInputAction.next, // para pular para o
-                // textform
+                textInputAction: TextInputAction.next, // para pular para o textform
                 onFieldSubmitted: (_) {
                   FocusScope.of(context).requestFocus(_priceFocusNode);
                 },
@@ -127,8 +132,9 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                 validator: (value) {
                   bool isEmpty = value.trim().isEmpty;
                   bool isInvalid = value.trim().length < 3;
+
                   if (isEmpty || isInvalid) {
-                    return 'Informe um Título válido!';
+                    return 'Informe um Título válido com num minímo 3 caracteres!';
                   }
 
                   return null;
@@ -137,14 +143,24 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
               TextFormField(
                   initialValue: _formData['price'].toString(),
                   decoration: InputDecoration(labelText: 'Preço'),
-                  textInputAction: TextInputAction.next, // para pular para o
-                  // textform
+                  textInputAction: TextInputAction.next, // para pular para o textform
                   focusNode: _priceFocusNode,
                   keyboardType: TextInputType.numberWithOptions(decimal: true),
                   onFieldSubmitted: (_) {
                     FocusScope.of(context).requestFocus(_descriptionFocusNode);
                   },
-                  onSaved: (value) => _formData['prive'] = double.parse(value)),
+                  onSaved: (value) => _formData['prive'] = double.parse(value),
+                  validator: (value){
+                    bool isEmpty = value.trim().isEmpty;
+                    var newPrice = double.tryParse(value);
+                    bool isInvalid = newPrice == null || newPrice <= 0;
+
+                    if (isEmpty || isInvalid){
+                      return 'Informe um Preço válido!';
+                    }
+                    return null;
+                  },
+                  ),
               TextFormField(
                 initialValue: _formData['description'],
                 decoration: InputDecoration(labelText: 'Descrição'),
@@ -153,25 +169,22 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                 focusNode: _descriptionFocusNode,
                 onSaved: (value) => _formData['description'] = value,
                 validator: (value) {
-                  bool emptyUrl = value.trim().isEmpty;
-                  var newPrice = double.tryParse(value);
-                  bool invalidUrl = newPrice == null || newPrice <= 0;
+                  bool isEmpty = value.trim().isEmpty;
+                  bool isIvanlid = value.trim().length < 10;
 
-                  if (emptyUrl || invalidUrl) {
-                    return 'Informe um Preço válido!';
+                  if (isEmpty || isIvanlid) {
+                    return 'Informe uma Descrição válida com no mínimo 10 caracteres!';
                   }
+                  return null;
                 },
               ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 // Quando não se tem a largura definida a row não é mostrada na tela
+                // ao usar o expandede ele corrige esse problema
                 children: [
                   Expanded(
-                    // ao usar o expandede ele corrige esse problema
                     child: TextFormField(
-                      initialValue: _formData['imageUrl'],
-                      // O controller so esta sendo usasdo porque precisa do prevew
-                      // da imagem antes de submeter o formulário
                       decoration: InputDecoration(
                         labelText: 'URL da Imagem',
                       ),
@@ -184,12 +197,13 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                       },
                       onSaved: (value) => _formData['imageUrl'] = value,
                       validator: (value) {
-                        bool emptyUrl = value.trim().isEmpty;
-                        bool invalidUrl = isValidImageUrl(value);
+                        bool isEmpty = value.trim().isEmpty;
+                        bool isInvalid = isValidImageUrl(value);
 
-                        if (emptyUrl || invalidUrl) {
+                        if (isEmpty || isInvalid) {
                           return 'Informe uma url válida!';
                         }
+                        return null;
                       },
                     ),
                   ),
