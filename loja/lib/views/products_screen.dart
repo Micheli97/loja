@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:loja/providers/products.dart';
 import 'package:loja/utils/app_routes.dart';
 import 'package:loja/widgets/app_drawer.dart';
 import 'package:loja/widgets/product_Item.dart';
-import 'package:provider/provider.dart';
 
 class ProductsScreen extends StatelessWidget {
   @override
@@ -29,13 +29,14 @@ class ProductsScreen extends StatelessWidget {
       body: Padding(
         padding: EdgeInsets.all(8),
         child: ListView.builder(
-            itemCount: productsData.itemsCount,
-            itemBuilder: (ctx, i) => Column(
-                  children: [
-                    ProductItem(products[i]),
-                    Divider(),
-                  ],
-                )),
+          itemCount: productsData.itemsCount,
+          itemBuilder: (ctx, i) => Column(
+            children: [
+              ProductItem(products[i]),
+              Divider(),
+            ],
+          ),
+        ),
       ),
     );
   }
