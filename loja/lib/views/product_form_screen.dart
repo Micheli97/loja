@@ -13,10 +13,9 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
   final _descriptionFocusNode = FocusNode();
   final _imageUrlFocusNode = FocusNode();
   final _imageUrlController = TextEditingController();
-  final _form = GlobalKey<FormState>();
-  // essa global key e para acessar o formulário
-  final _formData = Map<String, Object>();
-  // criando um objeto a partir do map
+  final _form =
+      GlobalKey<FormState>(); // essa global key e para acessar o formulário
+  final _formData = Map<String, Object>(); // criando um objeto a partir do map
 
   @override
   void initState() {
@@ -151,7 +150,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                 onFieldSubmitted: (_) {
                   FocusScope.of(context).requestFocus(_descriptionFocusNode);
                 },
-                onSaved: (value) => _formData['prive'] = double.parse(value),
+                onSaved: (value) => _formData['price'] = double.parse(value),
                 validator: (value) {
                   bool isEmpty = value.trim().isEmpty;
                   var newPrice = double.tryParse(value);
