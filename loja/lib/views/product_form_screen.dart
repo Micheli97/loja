@@ -25,14 +25,13 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
   }
 
   @override
-  void didChageDependencies() {
+  void didChangeDependencies() {
     super.didChangeDependencies();
 
     if (_formData.isEmpty) {
-      // aqui ele vai iniciar o formData apenas quando ele estiver vazio
       final product = ModalRoute.of(context).settings.arguments as Product;
+
       if (product != null) {
-        // aqui eu estou verificando se o produto foi passado como argumento
         _formData['id'] = product.id;
         _formData['title'] = product.title;
         _formData['description'] = product.description;
