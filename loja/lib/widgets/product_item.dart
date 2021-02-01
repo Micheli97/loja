@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:loja/providers/product.dart';
+import 'package:loja/providers/products.dart';
 import 'package:loja/utils/app_routes.dart';
+import 'package:provider/provider.dart';
 
 class ProductItem extends StatelessWidget {
   final Product product;
+
   ProductItem(this.product);
 
   @override
@@ -30,7 +33,32 @@ class ProductItem extends StatelessWidget {
             IconButton(
               icon: Icon(Icons.delete),
               color: Theme.of(context).errorColor,
-              onPressed: () {},
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: Text('Excluir Produto'),
+                    content: Text('Tem certeza?'),
+                    actions: [
+                      FlatButton(
+                        child: Text('Sim'),
+                        onPressed: () => Navigator.of(context).pop(false),
+                      ),
+                      FlatButton(
+                        child: Text('Não'),
+                        onPressed: () => Navigator.of(context).pop(true),
+                      ),
+                    ],
+                  ),
+                ).then((value) {
+                  if (value) {
+                    Provider.of<Products>(context, listen: false)
+                        .deleteProduct(product.id);
+                    // Uso do listen aqui e para nao notificar nenhuma alteraçao pq
+                    // nao sera esse provider que ira atualizar
+                  }
+                });
+              },
             ),
           ],
         ),
