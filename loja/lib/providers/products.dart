@@ -1,8 +1,10 @@
 // O objetivo da classe e encapsular a lista de produtos
 
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:loja/data/dummy_data.dart';
 import '../providers/product.dart';
 
@@ -28,6 +30,20 @@ class Products with ChangeNotifier {
   }
 
   void addProduct(Product newproduct) {
+    const url =
+        "https://flutter-loja-a8a23-default-rtdb.firebaseio.com/products.json";
+    // tem que add uma variavel apos a barra para que sej criada uma coleção no database
+    // o protocolo http é baseado em requisiçao e respota
+    http.post(url,
+        body: jsonEncode({
+          'title': newproduct.title,
+          'description': newproduct.description,
+          'price': newproduct.price,
+          'imageUrl': newproduct.imageUrl,
+          'isFavorite': newproduct.isFavorite,
+        }));
+    // aqui e o corpo da coleção de dados que será armazenado
+
     _items.add(
       Product(
         id: Random().nextDouble().toString(),
