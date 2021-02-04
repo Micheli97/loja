@@ -29,7 +29,7 @@ class Products with ChangeNotifier {
     return _items.length;
   }
 
-  void addProduct(Product newproduct) {
+  Future<void> addProduct(Product newproduct) {
     const url =
         "https://flutter-loja-a8a23-default-rtdb.firebaseio.com/products.json";
     // tem que add uma variavel apos a barra para que sej criada uma coleção no database
@@ -37,7 +37,7 @@ class Products with ChangeNotifier {
     // aqui e o corpo da coleção de dados que será armazenado
     // aqui eu estou fazendo uma requisição para o servidor e mandando os dados do produto pra la
     // jsonEncode transforma o map em arquivo json
-    http
+    return http
         .post(
           url,
           body: jsonEncode({
@@ -52,38 +52,41 @@ class Products with ChangeNotifier {
               // quando chegar a respota ele vai entrar nesse metodo e add o produto
               // agora o produto so vai ser add depois que tiver a resposta do seridor
               //  o json.decode transforma o arquivo json em um map
-              print('resposta'),
-              print(jsonDecode(response.body)),
-              _items.add(
-                Product(
-                  id: jsonDecode(response.body)[
-                      'name'], // aqui eu estou pegando o id do produto gerado pelo servidor
-                  title: newproduct.title,
-                  price: newproduct.price,
-                  description: newproduct.description,
-                  imageUrl: newproduct.imageUrl,
-                ),
-              ),
-              // _items.add(product);
-              notifyListeners() //é ele que vai notificar todos os envolvidos
-              // que a lista foi modificada
-            });
+              // print('resposta'),
+              // print(jsonDecode(response.body)),
+              _items.add(Product(
+                // aqui eu estou pegando o id do produto gerado pelo servidor
+                id: jsonDecode(response.body)['name'],
+                title: newproduct.title,
+                price: newproduct.price,
+                description: newproduct.description,
+                imageUrl: newproduct.imageUrl,
+              )),
+              // Pode ter mais de um then
 
-    print('na sequencia');
-    // da forma que está ele segue e add o produto independete do servidor
-    // _items.add(
-    //   Product(
-    //     id: Random().nextDouble().toString(),
-    //     title: newproduct.title,
-    //     price: newproduct.price,
-    //     description: newproduct.description,
-    //     imageUrl: newproduct.imageUrl,
-    //   ),
-    // );
-    // // _items.add(product);
-    // notifyListeners(); //é ele que vai notificar todos os envolvidos
-    // // que a lista foi modificada
+              // _items.add(product);
+              //é ele que vai notificar todos os envolvidos
+              // que a lista foi modificada
+              notifyListeners(),
+            });
+    // // aqui esta retornando um valor vazio
+    // return  Future.value();
   }
+
+  // print('na sequencia');
+  // da forma que está ele segue e add o produto independete do servidor
+  // _items.add(
+  //   Product(
+  //     id: Random().nextDouble().toString(),
+  //     title: newproduct.title,
+  //     price: newproduct.price,
+  //     description: newproduct.description,
+  //     imageUrl: newproduct.imageUrl,
+  //   ),
+  // );
+  // // _items.add(product);
+  // notifyListeners(); //é ele que vai notificar todos os envolvidos
+  // // que a lista foi modificada
 
   void updateProduct(Product product) {
     if (product == null || product.id == null) {
