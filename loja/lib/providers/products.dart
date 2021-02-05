@@ -1,18 +1,18 @@
 // O objetivo da classe e encapsular a lista de produtos
 
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:loja/data/dummy_data.dart';
+import 'package:loja/Exceptions/http_execptions.dart';
+import 'package:loja/utils/constants.dart';
 import '../providers/product.dart';
 
 class Products with ChangeNotifier {
   // quando uma mudança aconte ele notifica aos "interessasdos"
   // quando um determinado valor for modificado
-
-  List<Product> _items = DUMMY_PRODUCTS;
+  final String _baseUrl = '${Constants.BASE_API_URL}/products';
+  List<Product> _items = [];
 
   List<Product> get items => [..._items];
   // Aqui eu estou retornando uma cópida da lista
@@ -29,48 +29,47 @@ class Products with ChangeNotifier {
     return _items.length;
   }
 
-  Future<void> addProduct(Product newproduct) {
-    const url =
-        "https://flutter-loja-a8a23-default-rtdb.firebaseio.com/products.json";
-    // tem que add uma variavel apos a barra para que sej criada uma coleção no database
-    // o protocolo http é baseado em requisiçao e respota
-    // aqui e o corpo da coleção de dados que será armazenado
-    // aqui eu estou fazendo uma requisição para o servidor e mandando os dados do produto pra la
-    // jsonEncode transforma o map em arquivo json
-    return http
-        .post(
-          url,
-          body: jsonEncode({
-            'title': newproduct.title,
-            'description': newproduct.description,
-            'price': newproduct.price,
-            'imageUrl': newproduct.imageUrl,
-            'isFavorite': newproduct.isFavorite,
-          }),
-        )
-        .then((response) => {
-              // quando chegar a respota ele vai entrar nesse metodo e add o produto
-              // agora o produto so vai ser add depois que tiver a resposta do seridor
-              //  o json.decode transforma o arquivo json em um map
-              // print('resposta'),
-              // print(jsonDecode(response.body)),
-              _items.add(Product(
-                // aqui eu estou pegando o id do produto gerado pelo servidor
-                id: jsonDecode(response.body)['name'],
-                title: newproduct.title,
-                price: newproduct.price,
-                description: newproduct.description,
-                imageUrl: newproduct.imageUrl,
-              )),
-              // Pode ter mais de um then
+  Future<void> loadProducts() async {
+    final response = await http.get("$_baseUrl.json");
+    Map<String, dynamic> data = json.decode(response.body);
 
-              // _items.add(product);
-              //é ele que vai notificar todos os envolvidos
-              // que a lista foi modificada
-              notifyListeners(),
-            });
-    // // aqui esta retornando um valor vazio
-    // return  Future.value();
+    _items.clear();
+    if (data != null) {
+      data.forEach((productId, productData) {
+        _items.add(Product(
+          id: productId,
+          title: productData['title'],
+          description: productData['description'],
+          price: productData['price'],
+          imageUrl: productData['imageUrl'],
+          isFavorite: productData['isFavorite'],
+        ));
+      });
+      notifyListeners();
+    }
+    return Future.value();
+  }
+
+  Future<void> addProduct(Product newProduct) async {
+    final response = await http.post(
+      "$_baseUrl.json",
+      body: jsonEncode({
+        'title': newProduct.title,
+        'description': newProduct.description,
+        'price': newProduct.price,
+        'imageUrl': newProduct.imageUrl,
+        'isFavorite': newProduct.isFavorite,
+      }),
+    );
+
+    _items.add(Product(
+      id: json.decode(response.body)['name'],
+      title: newProduct.title,
+      description: newProduct.description,
+      price: newProduct.price,
+      imageUrl: newProduct.imageUrl,
+    ));
+    notifyListeners();
   }
 
   // print('na sequencia');
@@ -88,23 +87,41 @@ class Products with ChangeNotifier {
   // notifyListeners(); //é ele que vai notificar todos os envolvidos
   // // que a lista foi modificada
 
-  void updateProduct(Product product) {
+  Future<void> updateProduct(Product product) async {
     if (product == null || product.id == null) {
       return;
     }
 
     final index = _items.indexWhere((prod) => prod.id == product.id);
     if (index >= 0) {
+      await http.post(
+        "$_baseUrl/${product.id}.json",
+        body: json.encode({
+          'title': product.title,
+          'description': product.description,
+          'price': product.price,
+          'imageUrl': product.imageUrl,
+        }),
+      );
       _items[index] = product;
       notifyListeners();
     }
   }
 
-  void deleteProduct(String id) {
+  Future<void> deleteProduct(String id) async {
     final index = _items.indexWhere((prod) => prod.id == id);
     if (index >= 0) {
-      _items.retainWhere((prod) => prod.id == id);
+      final product = _items[index];
+      _items.remove(product);
       notifyListeners();
+
+      final response = await http.delete("$_baseUrl/${product.id}.json");
+
+      if (response.statusCode >= 400) {
+        _items.insert(index, product);
+        notifyListeners();
+        throw HttpException('Ocorreu um erro na exclusão do produto.');
+      }
     }
   }
 }
