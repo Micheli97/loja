@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loja/Exceptions/http_execptions.dart';
 import 'package:loja/providers/product.dart';
 import 'package:loja/providers/products.dart';
 import 'package:loja/utils/app_routes.dart';
@@ -11,6 +12,7 @@ class ProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scaffold = Scaffold.of(context);
     return ListTile(
       leading: CircleAvatar(
         backgroundImage: NetworkImage(product.imageUrl),
@@ -50,12 +52,20 @@ class ProductItem extends StatelessWidget {
                       ),
                     ],
                   ),
-                ).then((value) {
+                ).then((value) async {
                   if (value) {
-                    Provider.of<Products>(context, listen: false)
-                        .deleteProduct(product.id);
-                    // Uso do listen aqui e para nao notificar nenhuma alteraçao pq
-                    // nao sera esse provider que ira atualizar
+                    try {
+                      await Provider.of<Products>(context, listen: false)
+                          .deleteProduct(product.id);
+                      // Uso do listen aqui e para nao notificar nenhuma alteraçao pq
+                      // nao sera esse provider que ira atualizar
+                    } on HttpException catch (error) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(error.toString()),
+                        ),
+                      );
+                    }
                   }
                 });
               },
@@ -66,3 +76,5 @@ class ProductItem extends StatelessWidget {
     );
   }
 }
+// Uso do listen aqui e para nao notificar nenhuma alteraçao pq
+// nao sera esse provider que ira atualizar
