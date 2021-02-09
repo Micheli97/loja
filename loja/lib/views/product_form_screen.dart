@@ -72,9 +72,10 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
     _imageUrlFocusNode.dispose();
   }
 
-  void _saveForm() {
+  Future<void> _saveForm() async {
     var isValid = _form.currentState.validate();
     // chamando a validação
+
     if (!isValid) {
       // se o formulário nao for valido ele sai e nao executa as linhas abaixo
       return;
@@ -96,19 +97,32 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
     });
 
     final products = Provider.of<Products>(context, listen: false);
-    if (_formData['id'] == null) {
-      products.addProduct(product).then((_) {
-        setState(() {
-          _isLoading = false;
-        });
-        Navigator.of(context).pop();
-      });
-    } else {
+
+    try {
+      if (_formData['id'] == null) {
+        await products.addProduct(product);
+      } else {
+        await products.updateProduct(product);
+      }
+      Navigator.of(context).pop();
+    } catch (error) {
+      await showDialog<Null>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text('Ocorreu um erro!'),
+          content: Text('Ocorreu um erro pra salvar o produto!'),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Fechar'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        ),
+      );
+    } finally {
       setState(() {
         _isLoading = false;
       });
-      products.updateProduct(product);
-      Navigator.of(context).pop();
     }
   }
 
