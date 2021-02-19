@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:loja/widgets/auth_card.dart';
 
 class AuthScreen extends StatelessWidget {
   @override
@@ -27,6 +28,7 @@ class AuthScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
+                margin: EdgeInsets.only(bottom: 20.0),
                 padding: EdgeInsets.symmetric(
                   vertical: 8,
                   horizontal: 50,
@@ -53,7 +55,8 @@ class AuthScreen extends StatelessWidget {
                     fontFamily: "Anton",
                   ),
                 ),
-              )
+              ),
+              AuthCard(),
             ],
           ),
         )

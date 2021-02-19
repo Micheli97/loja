@@ -26,6 +26,7 @@ dependencies:
   provider: ^4.3.3
   intl: ^0.16.1
   http: ^0.12.2
+  auth: ^7.0.0
   
 
 
