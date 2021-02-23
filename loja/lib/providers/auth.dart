@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
+import 'package:loja/Exceptions/auth.dart';
 
 class Auth with ChangeNotifier {
   Future<void> _authenticate(
@@ -19,7 +20,11 @@ class Auth with ChangeNotifier {
       }),
     );
 
-    print(json.decode(response.body));
+    final responseBody = json.decode(response.body);
+    if (responseBody["error"] != null) {
+      throw AuthException(responseBody["error"]["message"]);
+    }
+
     return Future.value(); // garantindo que vai retornar alguma coisa
   }
 
