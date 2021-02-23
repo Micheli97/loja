@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:loja/providers/auth.dart';
+import 'package:provider/provider.dart';
 
 enum AuthMode { Signup, Login }
 
@@ -11,14 +13,14 @@ class _AuthCardState extends State<AuthCard> {
   GlobalKey<FormState> _form = GlobalKey();
   bool _isLoading = false;
   AuthMode _authMode = AuthMode.Login;
-
   final _passwordController = TextEditingController();
+
   final Map<String, String> _authData = {
     'email': "",
     "password": "",
   };
 
-  void _submit() {
+  Future<void> _submit() async {
     if (!_form.currentState.validate()) {
       return;
     }
@@ -29,10 +31,15 @@ class _AuthCardState extends State<AuthCard> {
     _form.currentState.save();
     // aqui ele esta chamando o metodo save para cada textform
 
+    Auth auth = Provider.of(context, listen: false);
+
     if (_authMode == AuthMode.Login) {
       // implementar o login
     } else {
-      // registrar
+      await auth.singup(
+        _authData["email"],
+        _authData["password"],
+      );
     }
     setState(() {
       _isLoading = false;
@@ -45,7 +52,9 @@ class _AuthCardState extends State<AuthCard> {
         _authMode = AuthMode.Signup;
       });
     } else {
-      _authMode = AuthMode.Login;
+      setState(() {
+        _authMode = AuthMode.Login;
+      });
     }
   }
 

@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:loja/providers/auth.dart';
+
 import 'package:loja/providers/cart.dart';
 import 'package:loja/providers/orders.dart';
 import 'package:loja/providers/products.dart';
+import 'package:provider/provider.dart';
+
 import 'package:loja/utils/app_routes.dart';
 import 'package:loja/views/auth_screen.dart';
 import 'package:loja/views/cart_screen.dart';
@@ -10,7 +14,6 @@ import 'package:loja/views/product_detail_screen.dart';
 import 'package:loja/views/product_form_screen.dart';
 import 'package:loja/views/products_overview_screen.dart';
 import 'package:loja/views/products_screen.dart';
-import 'package:provider/provider.dart';
 
 void main() {
   runApp(MyApp());
@@ -31,6 +34,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => new Orders(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => new Auth(),
         ),
       ],
 
