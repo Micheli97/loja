@@ -53,16 +53,17 @@ class _AuthCardState extends State<AuthCard> {
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size; // pegando o tamanho da tela
 
-    return Card(
-      elevation: 8.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      child: Container(
-        height: 320,
-        width: deviceSize.width * 0.75,
-        padding: EdgeInsets.all(16.0),
-        child: Form(
+    return SingleChildScrollView(
+      child: Card(
+        elevation: 8.0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        child: Container(
+          height: _authMode == AuthMode.Login ? 310 : 390,
+          width: deviceSize.width * 0.75,
+          padding: EdgeInsets.all(16.0),
+          child: Form(
             key: _form,
             child: Column(
               children: [
@@ -134,7 +135,9 @@ class _AuthCardState extends State<AuthCard> {
                   textColor: Theme.of(context).primaryColor,
                 ),
               ],
-            )),
+            ),
+          ),
+        ),
       ),
     );
   }
