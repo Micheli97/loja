@@ -4,15 +4,14 @@ import 'package:loja/providers/auth.dart';
 import 'package:loja/providers/cart.dart';
 import 'package:loja/providers/orders.dart';
 import 'package:loja/providers/products.dart';
+import 'package:loja/views/auth_home_screen.dart';
 import 'package:provider/provider.dart';
 
 import 'package:loja/utils/app_routes.dart';
-import 'package:loja/views/auth_screen.dart';
 import 'package:loja/views/cart_screen.dart';
 import 'package:loja/views/orders_screen.dart';
 import 'package:loja/views/product_detail_screen.dart';
 import 'package:loja/views/product_form_screen.dart';
-import 'package:loja/views/products_overview_screen.dart';
 import 'package:loja/views/products_screen.dart';
 
 void main() {
@@ -48,8 +47,7 @@ class MyApp extends StatelessWidget {
         ),
         // home: ProductOverviewScreen(),
         routes: {
-          AppRoutes.AUTH: (ctx) => AuthScreen(),
-          AppRoutes.HOME: (ctx) => ProductOverviewScreen(),
+          AppRoutes.AUTH_HOME: (ctx) => AuthOrHomeScreen(),
           AppRoutes.PRODUCT_DETAIL: (ctx) => ProductDetailScreen(),
           AppRoutes.CART: (ctx) => CartScreen(),
           AppRoutes.ORDERS: (ctx) => OrdersScreen(),
