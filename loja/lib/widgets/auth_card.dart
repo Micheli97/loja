@@ -15,6 +15,8 @@ class _AuthCardState extends State<AuthCard> {
   bool _isLoading = false;
   AuthMode _authMode = AuthMode.Login;
   final _passwordController = TextEditingController();
+  // O controler so foi usado porque era necessario pegar o valor passado no formfield de cima para comparar os
+  // valores e verificar se os valores eram iguais para confirmar a senha
 
   final Map<String, String> _authData = {
     'email': "",
@@ -48,7 +50,7 @@ class _AuthCardState extends State<AuthCard> {
     });
 
     _form.currentState.save();
-    // aqui ele esta chamando o metodo save para cada textform
+    // aqui ele esta chamando o metodo save para salvar cada textformfield do formulário cada textform
 
     Auth auth = Provider.of(context, listen: false);
     try {
@@ -76,6 +78,8 @@ class _AuthCardState extends State<AuthCard> {
     });
   }
 
+  // essa função está verificando em qual modo se encontra  a variavel _authMode e atualizada ela
+  // quando o botão e precionado
   void _switchAuthMode() {
     if (_authMode == AuthMode.Login) {
       setState(() {
@@ -115,6 +119,10 @@ class _AuthCardState extends State<AuthCard> {
                     }
                     return null;
                   },
+                  // O onsaved será chamado quando perdir para salvar o formulário
+                  // Ele recebe o valor, que pode ser colocado dentro de um map dentro do estado e atribuir esse valor
+                  // recebido para ser o valor dentro map
+                  // Resumindo neste momento a função onsaved esta recebendo um valor e atribuindo este a chave [email] criada no map
                   onSaved: (value) => _authData['email'] = value,
                   // aqui eu estou recebendo um valor, pegando a chave email
                   // e atribuindo o valor recebido a essa chave

@@ -12,6 +12,10 @@ class Auth with ChangeNotifier {
     return token != null;
   }
 
+  // metodo de autenticação
+  // está pegando o token e verificando se esta diferente de nulo, se data de exiração esta diferente de nulo
+  // e se a data de expiração e diferente da data atual
+  // caso seja verdade ele retorna o token se não retorna null
   String get token {
     if (_token != null &&
         _expiryDate != null &&
@@ -37,12 +41,17 @@ class Auth with ChangeNotifier {
       }),
     );
 
+    // aqui eu estou tratando os erros de autenticação que podem ocorrer durante o login
+    // estou armazenando  valor dentro de uma variavel chamda responseBody
+    // em seguida estou verificando se a chave de erro que vem com a resposta do backend e diferente de nulo
+    // caso a verificação seja verdadeira ele ira acessar a classe AuthException passando como parametro o erro e mensagem vinda do backend
     final responseBody = json.decode(response.body);
     if (responseBody["error"] != null) {
       throw AuthException(responseBody["error"]["message"]);
     } else {
       _token = responseBody["idToken"];
       _expiryDate = DateTime.now()
+          // aqui ele está somando o tempo que ele recebeu do back a data atual que vai dar a data de expiração
           .add(Duration(seconds: int.parse(responseBody["expiresIn"])));
     }
     notifyListeners();
