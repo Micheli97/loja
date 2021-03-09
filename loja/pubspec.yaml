@@ -27,6 +27,9 @@ dependencies:
   intl: ^0.16.1
   http: ^0.12.2
   auth: ^7.0.0
+  shared_preferences: ^0.5.7+3
+
+
   
 
 
