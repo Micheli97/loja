@@ -43,11 +43,11 @@ class ProductItem extends StatelessWidget {
                     content: Text('Tem certeza?'),
                     actions: [
                       FlatButton(
-                        child: Text('Sim'),
+                        child: Text('Não'),
                         onPressed: () => Navigator.of(context).pop(false),
                       ),
                       FlatButton(
-                        child: Text('Não'),
+                        child: Text('Sim'),
                         onPressed: () => Navigator.of(context).pop(true),
                       ),
                     ],
