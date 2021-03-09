@@ -8,7 +8,6 @@ import 'package:provider/provider.dart';
 class OrdersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final Orders orders = Provider.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('Meus pedidos'),
