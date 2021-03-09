@@ -96,93 +96,91 @@ class _AuthCardState extends State<AuthCard> {
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size; // pegando o tamanho da tela
 
-    return SingleChildScrollView(
-      child: Card(
-        elevation: 8.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        child: Container(
-          height: _authMode == AuthMode.Login ? 310 : 390,
-          width: deviceSize.width * 0.75,
-          padding: EdgeInsets.all(16.0),
-          child: Form(
-            key: _form,
-            child: Column(
-              children: [
+    return Card(
+      elevation: 8.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      child: Container(
+        height: _authMode == AuthMode.Login ? 310 : 390,
+        width: deviceSize.width * 0.75,
+        padding: EdgeInsets.all(16.0),
+        child: Form(
+          key: _form,
+          child: Column(
+            children: [
+              TextFormField(
+                decoration: InputDecoration(labelText: "E-mail"),
+                keyboardType: TextInputType.emailAddress,
+                validator: (value) {
+                  if (value.isEmpty || !value.contains("@")) {
+                    return "Informe um email válido!";
+                  }
+                  return null;
+                },
+                // O onsaved será chamado quando perdir para salvar o formulário
+                // Ele recebe o valor, que pode ser colocado dentro de um map dentro do estado e atribuir esse valor
+                // recebido para ser o valor dentro map
+                // Resumindo neste momento a função onsaved esta recebendo um valor e atribuindo este a chave [email] criada no map
+                onSaved: (value) => _authData['email'] = value,
+                // aqui eu estou recebendo um valor, pegando a chave email
+                // e atribuindo o valor recebido a essa chave
+              ),
+              TextFormField(
+                decoration: InputDecoration(labelText: "Senha"),
+                obscureText: true,
+                controller: _passwordController,
+                validator: (value) {
+                  if (value.isEmpty || value.length < 5) {
+                    return "Informe uma senha válida!";
+                  }
+                  return null;
+                },
+                onSaved: (value) => _authData['password'] = value,
+                // aqui eu estou recebendo um valor, pegando a chave email atribuindo o valor recebido a essa chave
+              ),
+              if (_authMode == AuthMode.Signup)
+                // verificando o modo para mostrar ou nao um campo
                 TextFormField(
-                  decoration: InputDecoration(labelText: "E-mail"),
-                  keyboardType: TextInputType.emailAddress,
-                  validator: (value) {
-                    if (value.isEmpty || !value.contains("@")) {
-                      return "Informe um email válido!";
-                    }
-                    return null;
-                  },
-                  // O onsaved será chamado quando perdir para salvar o formulário
-                  // Ele recebe o valor, que pode ser colocado dentro de um map dentro do estado e atribuir esse valor
-                  // recebido para ser o valor dentro map
-                  // Resumindo neste momento a função onsaved esta recebendo um valor e atribuindo este a chave [email] criada no map
-                  onSaved: (value) => _authData['email'] = value,
-                  // aqui eu estou recebendo um valor, pegando a chave email
-                  // e atribuindo o valor recebido a essa chave
-                ),
-                TextFormField(
-                  decoration: InputDecoration(labelText: "Senha"),
+                  decoration: InputDecoration(labelText: "Confirmmar senha"),
                   obscureText: true,
-                  controller: _passwordController,
-                  validator: (value) {
-                    if (value.isEmpty || value.length < 5) {
-                      return "Informe uma senha válida!";
-                    }
-                    return null;
-                  },
-                  onSaved: (value) => _authData['password'] = value,
-                  // aqui eu estou recebendo um valor, pegando a chave email atribuindo o valor recebido a essa chave
-                ),
-                if (_authMode == AuthMode.Signup)
-                  // verificando o modo para mostrar ou nao um campo
-                  TextFormField(
-                    decoration: InputDecoration(labelText: "Confirmmar senha"),
-                    obscureText: true,
-                    validator: _authMode == AuthMode.Signup
-                        ? (value) {
-                            if (value != _passwordController.text) {
-                              return "As senhas são diferentes";
-                            }
-                            return null;
+                  validator: _authMode == AuthMode.Signup
+                      ? (value) {
+                          if (value != _passwordController.text) {
+                            return "As senhas são diferentes";
                           }
-                        : null,
-                  ),
-                Spacer(),
-                // rederização condicional
-                if (_isLoading)
-                  CircularProgressIndicator()
-                else
-                  RaisedButton(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    color: Theme.of(context).primaryColor,
-                    textColor: Theme.of(context).primaryTextTheme.button.color,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 30.0,
-                      vertical: 8.0,
-                    ),
-                    child: Text(
-                      _authMode == AuthMode.Login ? "ENTRAR" : "REGISTRAR",
-                    ),
-                    onPressed: _submit,
-                  ),
-                FlatButton(
-                  onPressed: _switchAuthMode,
-                  child: Text(
-                    "ALTERNAR P/ ${_authMode == AuthMode.Login ? 'REGISTRAR' : 'LOGIN'}",
-                  ),
-                  textColor: Theme.of(context).primaryColor,
+                          return null;
+                        }
+                      : null,
                 ),
-              ],
-            ),
+              Spacer(),
+              // rederização condicional
+              if (_isLoading)
+                CircularProgressIndicator()
+              else
+                RaisedButton(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  color: Theme.of(context).primaryColor,
+                  textColor: Theme.of(context).primaryTextTheme.button.color,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 30.0,
+                    vertical: 8.0,
+                  ),
+                  child: Text(
+                    _authMode == AuthMode.Login ? "ENTRAR" : "REGISTRAR",
+                  ),
+                  onPressed: _submit,
+                ),
+              FlatButton(
+                onPressed: _switchAuthMode,
+                child: Text(
+                  "ALTERNAR P/ ${_authMode == AuthMode.Login ? 'REGISTRAR' : 'LOGIN'}",
+                ),
+                textColor: Theme.of(context).primaryColor,
+              ),
+            ],
           ),
         ),
       ),
